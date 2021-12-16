@@ -2,17 +2,26 @@ package main
 
 import (
 	"fmt"
-	"go-blockchain/core/chain"
+	"go-blockchain/core"
+	"strconv"
 )
 
 func main() {
-	Chain := chain.InitBlockchain()
+	chain := core.InitBlockchain()
 	
-	// Interact with blockchain here
+	// Interact eith blockchain here
 
-	Chain.AddBlock("block1")
-	Chain.AddBlock("block2")
+	chain.AddBlock("block1")
+	chain.AddBlock("block2")
 
-	fmt.Println(string(Chain.GetBlock(0).Data))
+	for _, block := range chain.Blocks {
+		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
+		fmt.Printf("Data: %s\n", block.Data)
+		fmt.Printf("Hash: %x\n", block.Hash)
+
+		pow := core.NewProof(block)
+		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
+		fmt.Println()
+	}
 
 }
