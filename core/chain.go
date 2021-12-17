@@ -99,22 +99,37 @@ func (chain *Blockchain) Iterator() *BlockchainIterator {
 func (iter *BlockchainIterator) Next() *Block {
 	var block *Block
 	var encodedBlock []byte
-	
+
 	err := iter.Database.View(func(txn *badger.Txn) error {
 		item, err := txn.Get(iter.CurrentHash)
 		Handle(err)
 		// might cause some weird error because of copying function
-		_, err = item.ValueCopy(encodedBlock)
+		err = item.Value(func (v []byte) error{
+			encodedBlock = v
+			return nil
+		})
 		block = Deserialize(encodedBlock)
 		return err
 	})
 	Handle(err)
-
+	fmt.Printf("%s\n", block.Data)
 	iter.CurrentHash = block.PrevHash
 
 	return block
 }
-/* func (chain *Blockchain) GetBlock(index int) *Block {
-	return chain.Blocks[index]
-} */
+
+// func (iter *BlockchainIterator) GetDBLastHash() *Block {
+// 	var encodedBlock []byte
+// 	var block *Block
+// 	err := iter.Database.View(func(txn *badger.Txn) error {
+// 		item, err := txn.Get(iter.CurrentHash)
+// 		Handle(err)
+// 		// might cause some weird error because of copying function
+// 		_, err = item.ValueCopy(encodedBlock)
+// 		block = Deserialize(encodedBlock)
+// 		return err
+// 	})
+// 	Handle(err)
+// 	return block
+// }
 
