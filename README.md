@@ -8,3 +8,15 @@ The application will automatically creates genesis block if the local blocks dat
 
 ### Database
 This blockchain use `BadgerDB` which is a key-value store
+
+### Basic usage
+
+### Printing Blockchain
+```
+go run main.go print
+```
+
+### Add Block
+```
+go run main.go add -block <data: as a string>
+```
